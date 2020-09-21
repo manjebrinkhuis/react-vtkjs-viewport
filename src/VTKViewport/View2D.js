@@ -74,7 +74,7 @@ export default class View2D extends Component {
     const normal = camera.getDirectionOfProjection();
     manip.setNormal(...normal);
     manip.setOrigin(...camera.getFocalPoint());
-    handle.rotateFromDirections(handle.getDirection(), normal);
+    // handle.rotateFromDirections(handle.getDirection(), normal);
   }
 
   componentDidMount() {
