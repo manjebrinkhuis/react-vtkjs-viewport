@@ -67,6 +67,23 @@ export default class View2D extends Component {
     this.apiProperties = {};
   }
 
+  updatePaintbrush() {
+    const manip = this.paintWidget.getManipulator();
+    const handle = this.paintWidget.getWidgetState().getHandle();
+
+    // After https://github.com/Kitware/vtk-js/commit/0f86669159bb73fdd0df7fe5e483b00f6f49887d
+    // vtkPaintWidget uses the orientation mixin as parameter to stateBuilder
+    // and handles the paintbrush orientation internally,
+    // older versions of vtkjs rely on the direction mixin.
+    if (handle.hasOwnProperty('rotateFromDirections')) {
+      const camera = this.paintRenderer.getActiveCamera();
+      const normal = camera.getDirectionOfProjection();
+      manip.setNormal(...normal);
+      manip.setOrigin(...camera.getFocalPoint());
+      handle.rotateFromDirections(handle.getDirection(), normal);
+    }
+  }
+
   componentDidMount() {
     // Tracking ID to tie emitted events to this component
     const uid = uuidv4();
@@ -172,6 +189,11 @@ export default class View2D extends Component {
     istyle.setVolumeActor(this.props.volumes[0]);
     const range = istyle.getSliceRange();
     istyle.setSlice((range[0] + range[1]) / 2);
+
+    istyle.onModified(() => {
+      this.updatePaintbrush();
+    });
+    this.updatePaintbrush();
 
     const svgWidgetManager = vtkSVGWidgetManager.newInstance();
 
