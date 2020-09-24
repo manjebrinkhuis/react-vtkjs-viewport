@@ -19,7 +19,7 @@
     "lint": "eslint src/** --fix",
     "start": "yarn run dev",
     "predeploy": "yarn install && yarn run build:release",
-    "prepare": "yarn run build && yarn run build:release"
+    "prepublishOnly": "yarn run build && yarn run build:release"
   },
   "peerDependencies": {
     "react": "^16.8.6",
